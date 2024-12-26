@@ -1,32 +1,308 @@
-# Prerequisites
-*.d
+#include <iostream>
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+class node
+{
+    public:
+    int data;
+    node *next;
+    node()
+    {
+        data=0;
+        next=NULL;
+    }
+};
+class linkedlist
+{
+    public:
+    int size =0;
+    node *head;
+    linkedlist()
+    {
+        head=NULL;
+    }
+    bool isempty()
+    {
+        return (head==NULL);
+    }
+    void insertfirst(int item)
+    {
+        node *newnode = new node;
+        newnode->data = item;
+        if (isempty())
+        {
+            head=newnode;
+        }else
+        {
+            newnode->next = head;
+            head=newnode;
+        }
+        size++;
+        
+    }
+    void insertlast(int item)
+    {
+        node *temp=head;
+        node *newnode =new node;
+        newnode->data=item;
+        while (temp->next!=NULL)
+        {
+            temp=temp->next;
+        }
+        temp->next=newnode;
+        size++;
+    }
+    void display()
+    {
+        node *temp;
+        temp=head;
+        while (temp!=NULL)
+        {
+            std::cout << temp->data << std::endl;
+            temp=temp->next;
+        }
+        
+    }
+    bool isfound(int item)
+    {
+        bool r=false;
+        node *temp ;
+        temp = head;
+        if (isempty())
+        {
+            std::cout << "\nthis list is empty" << std::endl;
+        }else
+        {
+            while (temp!=NULL)
+            {
+                if (temp->data==item)
+                {
+                    r= true;
+                    temp=temp->next;
+                    break;
+                }else
+                {
+                    temp=temp->next;
+                }
+            }
+            
+        }
+        return r;
+    }
+    node *foundnode(int item)
+    {
+        node *temp ;
+        temp = head;
+        node *ret = new node;
+        if (isempty())
+        {
+            ret=NULL;
+        }else 
+        {
+            while (temp!=NULL)
+            {
+                if (temp->data==item)
+                {
+                    ret=temp;
+                    break;
+                }
+                temp=temp->next;
+            }
+            
+        }
+        
+        return ret;
+    }
+    int delet(int item)
+    {
+        if (isempty())
+        {
+            std::cout << "\nthis list is empty";
+            return -1;
+        }
+        
+        node *temp=head;
+        int n=0;
+        if (head->data == item) {
+            n=head->data;
+            head = head->next;
+            delete temp;
+        }else{
+            while (temp!=NULL)
+            {
+                if (temp->next->data==item)
+                {
+                    n=temp->next->data;
+                    temp->next=temp->next->next;
+                    break;
+                }
+                temp=temp->next;
+            }
+        }
+        size--;
+            return n;
+        
+    }
+    void swapends()
+    {
+        node *first = head;
+        node *last = head;
+        int x,y;
+        x = delet(first->data);
+        while (last->next!=NULL)
+        {
+            last=last->next;
+        }
+        y = delet(last->data);
+        insertfirst(y);
+        insertlast(x);
+        
+    }
+    void revers() {
+    node *prev = NULL;   
+    node *current = head; 
+    node *next = NULL;
+        while (current != NULL) {  // نكرر حتى نصل إلى نهاية القائمة
+        next = current->next;  // الخطوة 1: حفظ العقدة التالية
+        current->next = prev;  // الخطوة 2: عكس اتجاه المؤشر next للعقدة الحالية
+        prev = current;  // الخطوة 3: تحريك prev إلى العقدة الحالية
+        current = next;  // الخطوة 4: تحريك current إلى العقدة التالية
+    }
+    
+    head = prev;  // بعد انتهاء الحلقة، سيكون prev هو الرأس الجديد (الذي كان في البداية هو الذيل)
+    }
+    void swap(int item,int key)
+    {
+        node *n1,*n2;
+        n1=foundnode(item);
+        n2=foundnode(key);
+        n1->data=key;
+        n2->data=item;
+    }
+    void sort()
+    {
+        int x,y;
 
-# Precompiled Headers
-*.gch
-*.pch
+        bool sawpped;
+        do{
+            node *temp =head;
+            sawpped=false;
+        while (temp->next!=nullptr)
+        {   
+            if (temp->data > temp->next->data)
+            {
+                x=temp->data;
+                y=temp->next->data;
+                swap(x,y);
+                sawpped=true;
+            }
+            temp=temp->next;
+        }
+        }while (sawpped);
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+    }
+    node*findmax(node* r)
+    {
+        node*temp=r;
+        node *max;
+        max=r;
+        while (temp!=nullptr)
+        {
+            if (max->data > temp->data)
+            {
+                max=temp;
+            }
+            temp=temp->next;
+        }
+        return max;
+    }
+    void sort2()
+    {
+        node* temp=head;
+        while (temp!=NULL)
+        {
+            node * max =findmax(temp);
+            if(max!=temp)
+            {
+                swap(max->data,temp->data);
+            }
+            temp=temp->next;
+        }
+    }
+    node *findmid(node *& h){
+    if (!h) return nullptr;
+    node* fast = h;
+    node* slow = h;
+    while (fast && fast->next)
+    {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    return slow;
+    }
+    node* merg(node*&left,node*&right)
+    {
+        node *ans=new node();
+        node *cur=ans;
+        while (right&&left)
+        {
+            if (right->data < left->data)
+            {
+                cur->next=right;
+                right=right->next;
+            }else
+            {
+                cur->next=left;
+                left=left->next;
+            }
+            cur=cur->next;
+        }
+        if(right)cur->next=right;
+        if(left)cur->next=left;
+        return ans->next;
+    }
+    node* mergsortin(node *&t)
+    {
+        if(!t||!t->next) return t;
+        node *mid=findmid(t);
+        node *right=mid;
+        node *left=t;
+        mid->next=NULL;
+        mergsortin(right);
+        mergsortin(left);
+        
+        return merg(left,right);
+    }
+    
+};
 
-# Fortran module files
-*.mod
-*.smod
+int main()
+{
+    linkedlist l1;
+    l1.insertfirst(30);
+    l1.insertfirst(50);
+    l1.insertfirst(10);
+    l1.insertfirst(20);
+    l1.insertfirst(40);
+    l1.display();
+    //std::cout << "\n|==========================|" << std::endl;
+    //l1.delet(20);
+    //l1.display();
+    //std::cout << "\n|==========================|" << std::endl;
+    //l1.delet(50);
+    //l1.display();
+    //std::cout << "\n|==========================|" << std::endl;
+    //l1.insertlast(50);
+    //l1.display();
+    std::cout << "\n|==========================|" << std::endl;
+    //l1.revers();
+    //l1.display();
+    std::cout << "\n|==========================|" << std::endl;
+    //l1.swap(10,40);    
+    //l1.display();
+    std::cout << "\n|==========================|" << std::endl;
+    //l1.sort2();
+    l1.mergsortin(l1.head);
+    //l1.display();
+    
 
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
+}
